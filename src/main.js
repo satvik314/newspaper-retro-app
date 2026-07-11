@@ -118,7 +118,16 @@ form.addEventListener('submit', async e => {
         serpapiKey: serpapiKeyInput.value.trim()
       })
     })
-    const data = await res.json()
+    const raw = await res.text()
+    let data
+    try {
+      data = JSON.parse(raw)
+    } catch {
+      throw new Error(
+        `The API server did not answer (got ${res.status} with a non-JSON page). ` +
+          'Make sure the backend is running — start the app with "npm run dev" (or "npm start" for a production build), not vite alone.'
+      )
+    }
     if (!res.ok) throw new Error(data.error || 'Unknown error')
     renderArticle(data)
   } catch (err) {
