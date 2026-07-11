@@ -23,14 +23,18 @@ async function searchSerpApi(topic, apiKey) {
   const url = new URL('https://serpapi.com/search.json')
   url.searchParams.set('engine', 'google')
   url.searchParams.set('q', topic)
-  url.searchParams.set('num', '8')
+  // NOTE: Google discontinued the `num` parameter, so SerpApi no longer honors it
+  // on the standard google engine (it can error or return inconsistent counts).
+  // We simply take the default page of organic results and slice what we need.
   url.searchParams.set('api_key', apiKey)
 
   const res = await fetch(url)
   if (!res.ok) throw new Error(`SerpAPI error: ${res.status} ${await res.text()}`)
   const data = await res.json()
 
-  const results = (data.organic_results || []).map(r => ({
+  if (data.error) throw new Error(`SerpAPI error: ${data.error}`)
+
+  const results = (data.organic_results || []).slice(0, 8).map(r => ({
     title: r.title,
     link: r.link,
     snippet: r.snippet || '',
@@ -58,11 +62,37 @@ async function writeArticle(topic, search, apiKey) {
     },
     body: JSON.stringify({
       model: 'gpt-5.4-mini',
-      response_format: { type: 'json_object' },
+      // GPT-5-class models are reasoning models: the legacy
+      // `response_format: { type: 'json_object' }` is unreliable here. The current
+      // documented path is a strict json_schema, which forces the model to return
+      // exactly this shape so JSON.parse never fails.
+      response_format: {
+        type: 'json_schema',
+        json_schema: {
+          name: 'newspaper_article',
+          strict: true,
+          schema: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['headline', 'subheadline', 'dateline', 'article', 'pull_quote'],
+            properties: {
+              headline: { type: 'string', description: 'Short, punchy, uppercase-friendly' },
+              subheadline: { type: 'string', description: 'One-sentence deck' },
+              dateline: { type: 'string', description: 'e.g. "NEW YORK — By Wire Service"' },
+              article: {
+                type: 'array',
+                description: '4-6 paragraphs',
+                items: { type: 'string' }
+              },
+              pull_quote: { type: 'string', description: 'One striking sentence from the story' }
+            }
+          }
+        }
+      },
       messages: [
         {
           role: 'system',
-          content: `You are a 1920s newspaper journalist writing for "THE DAILY DISPATCH". Given a topic and fresh web search results, write a newspaper front-page piece in period style — authoritative, vivid, slightly dramatic, but factually grounded ONLY in the provided search results. Respond with JSON: {"headline": string (short, punchy, uppercase-friendly), "subheadline": string (one-sentence deck), "dateline": string (e.g. "NEW YORK — By Wire Service"), "article": string[] (4-6 paragraphs), "pull_quote": string (one striking sentence from the story)}.`
+          content: `You are a 1920s newspaper journalist writing for "THE DAILY DISPATCH". Given a topic and fresh web search results, write a newspaper front-page piece in period style — authoritative, vivid, slightly dramatic, but factually grounded ONLY in the provided search results.`
         },
         {
           role: 'user',
@@ -73,7 +103,10 @@ async function writeArticle(topic, search, apiKey) {
   })
   if (!res.ok) throw new Error(`OpenAI error: ${res.status} ${await res.text()}`)
   const data = await res.json()
-  return JSON.parse(data.choices[0].message.content)
+  const message = data.choices?.[0]?.message
+  if (message?.refusal) throw new Error(`OpenAI refused the request: ${message.refusal}`)
+  if (!message?.content) throw new Error('OpenAI returned an empty response.')
+  return JSON.parse(message.content)
 }
 
 app.post('/api/research', async (req, res) => {
