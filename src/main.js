@@ -10,6 +10,22 @@ const today = new Date().toLocaleDateString('en-US', {
 })
 
 app.innerHTML = `
+  <div class="layout">
+  <aside class="sidebar">
+    <h2 class="sidebar-title">The Print Shop</h2>
+    <p class="sidebar-note">Furnish your own credentials, and the presses shall run on your account.</p>
+
+    <label class="sidebar-label" for="openai-key">OPENAI KEY</label>
+    <input id="openai-key" class="sidebar-input" type="password" placeholder="sk-..." autocomplete="off" />
+
+    <label class="sidebar-label" for="serpapi-key">SERPAPI KEY</label>
+    <input id="serpapi-key" class="sidebar-input" type="password" placeholder="Your SerpAPI key" autocomplete="off" />
+
+    <button id="save-keys" class="sidebar-btn">SET THE TYPE</button>
+    <button id="clear-keys" class="sidebar-btn sidebar-btn-secondary">CLEAR</button>
+    <p id="keys-status" class="sidebar-status"></p>
+    <p class="sidebar-fineprint">Keys are kept in your browser only (localStorage) and sent with each dispatch.</p>
+  </aside>
   <div class="paper">
     <header class="masthead">
       <div class="masthead-top">
@@ -42,7 +58,32 @@ app.innerHTML = `
       ESTABLISHED 1909 &bull; PRINTED ON RECYCLED ELECTRONS &bull; THE DAILY DISPATCH CO.
     </footer>
   </div>
+  </div>
 `
+
+const openaiKeyInput = document.querySelector('#openai-key')
+const serpapiKeyInput = document.querySelector('#serpapi-key')
+const saveKeysBtn = document.querySelector('#save-keys')
+const clearKeysBtn = document.querySelector('#clear-keys')
+const keysStatus = document.querySelector('#keys-status')
+
+openaiKeyInput.value = localStorage.getItem('openaiKey') || ''
+serpapiKeyInput.value = localStorage.getItem('serpapiKey') || ''
+if (openaiKeyInput.value || serpapiKeyInput.value) keysStatus.textContent = '✓ Keys on file'
+
+saveKeysBtn.addEventListener('click', () => {
+  localStorage.setItem('openaiKey', openaiKeyInput.value.trim())
+  localStorage.setItem('serpapiKey', serpapiKeyInput.value.trim())
+  keysStatus.textContent = '✓ Keys set in type'
+})
+
+clearKeysBtn.addEventListener('click', () => {
+  localStorage.removeItem('openaiKey')
+  localStorage.removeItem('serpapiKey')
+  openaiKeyInput.value = ''
+  serpapiKeyInput.value = ''
+  keysStatus.textContent = 'Keys cleared'
+})
 
 const form = document.querySelector('#topic-form')
 const input = document.querySelector('#topic-input')
@@ -71,7 +112,11 @@ form.addEventListener('submit', async e => {
     const res = await fetch('/api/research', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ topic })
+      body: JSON.stringify({
+        topic,
+        openaiKey: openaiKeyInput.value.trim(),
+        serpapiKey: serpapiKeyInput.value.trim()
+      })
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data.error || 'Unknown error')

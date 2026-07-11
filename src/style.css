@@ -21,9 +21,120 @@ body {
   min-height: 100vh;
 }
 
-.paper {
-  max-width: 860px;
+.layout {
+  display: flex;
+  gap: 1.5rem;
+  max-width: 1180px;
   margin: 0 auto;
+  align-items: flex-start;
+}
+
+/* ---- Sidebar (The Print Shop) ---- */
+.sidebar {
+  flex: 0 0 260px;
+  position: sticky;
+  top: 2rem;
+  background: var(--paper-dark);
+  border: 2px solid var(--rule);
+  outline: 1px solid var(--rule);
+  outline-offset: 3px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  padding: 1.5rem 1.3rem;
+}
+
+.sidebar-title {
+  font-family: 'UnifrakturCook', cursive;
+  font-size: 1.7rem;
+  text-align: center;
+  border-bottom: 3px double var(--rule);
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.sidebar-note {
+  font-style: italic;
+  font-size: 0.82rem;
+  color: var(--ink-faded);
+  text-align: center;
+  margin-bottom: 1.1rem;
+}
+
+.sidebar-label {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  margin-bottom: 0.3rem;
+}
+
+.sidebar-input {
+  width: 100%;
+  font-family: 'Old Standard TT', serif;
+  font-size: 0.9rem;
+  padding: 0.45rem 0.6rem;
+  background: var(--paper);
+  border: 1.5px solid var(--rule);
+  color: var(--ink);
+  margin-bottom: 0.9rem;
+}
+
+.sidebar-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.sidebar-btn {
+  width: 100%;
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  font-size: 0.78rem;
+  padding: 0.5rem;
+  background: var(--ink);
+  color: var(--paper);
+  border: 2px solid var(--ink);
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.sidebar-btn-secondary {
+  background: transparent;
+  color: var(--ink);
+}
+
+.sidebar-btn-secondary:hover {
+  background: transparent;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.sidebar-status {
+  text-align: center;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--accent);
+  min-height: 1.1em;
+  margin-bottom: 0.6rem;
+}
+
+.sidebar-fineprint {
+  font-size: 0.68rem;
+  color: var(--ink-faded);
+  text-align: center;
+  border-top: 1px solid var(--rule);
+  padding-top: 0.6rem;
+}
+
+.paper {
+  flex: 1 1 auto;
+  min-width: 0;
   background: var(--paper);
   background-image: radial-gradient(ellipse at center, rgba(255, 252, 240, 0.5), transparent 70%),
     repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(90, 80, 69, 0.02) 3px, rgba(90, 80, 69, 0.02) 4px);
@@ -301,6 +412,17 @@ body {
   font-size: 0.7rem;
   letter-spacing: 0.15em;
   color: var(--ink-faded);
+}
+
+@media (max-width: 900px) {
+  .layout {
+    flex-direction: column;
+  }
+  .sidebar {
+    position: static;
+    flex: 1 1 auto;
+    width: 100%;
+  }
 }
 
 @media (max-width: 640px) {

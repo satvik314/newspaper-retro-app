@@ -8,12 +8,12 @@ const PORT = process.env.PORT || 3001
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY
 
-async function searchSerpApi(topic) {
+async function searchSerpApi(topic, apiKey) {
   const url = new URL('https://serpapi.com/search.json')
   url.searchParams.set('engine', 'google')
   url.searchParams.set('q', topic)
   url.searchParams.set('num', '8')
-  url.searchParams.set('api_key', SERPAPI_API_KEY)
+  url.searchParams.set('api_key', apiKey)
 
   const res = await fetch(url)
   if (!res.ok) throw new Error(`SerpAPI error: ${res.status} ${await res.text()}`)
@@ -33,7 +33,7 @@ async function searchSerpApi(topic) {
   return { results, answerBox }
 }
 
-async function writeArticle(topic, search) {
+async function writeArticle(topic, search, apiKey) {
   const context = [
     search.answerBox ? `Answer box: ${search.answerBox.title} — ${search.answerBox.answer}` : null,
     ...search.results.map((r, i) => `[${i + 1}] ${r.title} (${r.source})\n${r.snippet}\nURL: ${r.link}`)
@@ -43,7 +43,7 @@ async function writeArticle(topic, search) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${OPENAI_API_KEY}`
+      Authorization: `Bearer ${apiKey}`
     },
     body: JSON.stringify({
       model: 'gpt-5.4-mini',
@@ -68,13 +68,17 @@ async function writeArticle(topic, search) {
 app.post('/api/research', async (req, res) => {
   const topic = (req.body?.topic || '').trim()
   if (!topic) return res.status(400).json({ error: 'Please provide a topic.' })
-  if (!OPENAI_API_KEY || !SERPAPI_API_KEY) {
-    return res.status(500).json({ error: 'Server missing OPENAI_API_KEY or SERPAPI_API_KEY. See .env.example.' })
+  // Keys supplied from the sidebar take precedence over server .env keys
+  const openaiKey = (req.body?.openaiKey || '').trim() || OPENAI_API_KEY
+  const serpapiKey = (req.body?.serpapiKey || '').trim() || SERPAPI_API_KEY
+
+  if (!openaiKey || !serpapiKey) {
+    return res.status(400).json({ error: 'Missing API keys. Enter your OpenAI and SerpAPI keys in the Print Shop sidebar (or set them in .env on the server).' })
   }
 
   try {
-    const search = await searchSerpApi(topic)
-    const article = await writeArticle(topic, search)
+    const search = await searchSerpApi(topic, serpapiKey)
+    const article = await writeArticle(topic, search, openaiKey)
     res.json({ ...article, sources: search.results.slice(0, 5) })
   } catch (err) {
     console.error(err)

@@ -12,13 +12,10 @@ Built with **Vite** (vanilla JS) + a small **Express** API server that keeps you
    npm install
    ```
 
-2. Configure API keys:
+2. Configure API keys — either way works:
 
-   ```bash
-   cp .env.example .env
-   ```
-
-   Then edit `.env` with your [OpenAI API key](https://platform.openai.com/api-keys) and [SerpAPI key](https://serpapi.com/manage-api-key).
+   - **In the app:** enter your [OpenAI API key](https://platform.openai.com/api-keys) and [SerpAPI key](https://serpapi.com/manage-api-key) in the **Print Shop** sidebar. They're stored in your browser's localStorage and sent with each request. Sidebar keys take precedence.
+   - **On the server:** `cp .env.example .env` and fill in the keys there as a fallback.
 
 3. Run the app (starts the API server and Vite dev server together):
 
