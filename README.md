@@ -1,2 +1,36 @@
-# newspaper-retro-app
-An app that fetch latest news on a topic and displays. Built in retro theme. 
+# 🗞️ The Daily Dispatch — Retro Newspaper AI Search
+
+Enter a topic and get a 1920s-style newspaper front page about it. The app searches the web with **SerpAPI** and writes the article with OpenAI's **gpt-5.4-mini**.
+
+Built with **Vite** (vanilla JS) + a small **Express** API server that keeps your API keys off the client.
+
+## Setup
+
+1. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Configure API keys:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Then edit `.env` with your [OpenAI API key](https://platform.openai.com/api-keys) and [SerpAPI key](https://serpapi.com/manage-api-key).
+
+3. Run the app (starts the API server and Vite dev server together):
+
+   ```bash
+   npm run dev
+   ```
+
+   Open http://localhost:5173
+
+## How it works
+
+1. You wire a topic in from the **Telegraph Desk**.
+2. `POST /api/research` hits SerpAPI (Google engine) for fresh results.
+3. The results are handed to `gpt-5.4-mini`, which writes a period-style front-page article (headline, deck, dateline, pull quote, paragraphs) as JSON.
+4. The front page renders with a drop cap, two-column layout, and source links from the wire.

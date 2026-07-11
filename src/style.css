@@ -1,0 +1,316 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --paper: #f4ecd8;
+  --paper-dark: #e8dcc0;
+  --ink: #2b2620;
+  --ink-faded: #5a5045;
+  --rule: #3a332a;
+  --accent: #7a1f1f;
+}
+
+body {
+  background: #3a332a url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" opacity="0.06"><circle cx="10" cy="10" r="1" fill="white"/><circle cx="50" cy="40" r="1" fill="white"/><circle cx="30" cy="65" r="1" fill="white"/></svg>');
+  font-family: 'Old Standard TT', 'Times New Roman', serif;
+  color: var(--ink);
+  padding: 2rem 1rem;
+  min-height: 100vh;
+}
+
+.paper {
+  max-width: 860px;
+  margin: 0 auto;
+  background: var(--paper);
+  background-image: radial-gradient(ellipse at center, rgba(255, 252, 240, 0.5), transparent 70%),
+    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(90, 80, 69, 0.02) 3px, rgba(90, 80, 69, 0.02) 4px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 0 80px rgba(120, 100, 70, 0.15);
+  padding: 2.5rem 3rem 2rem;
+  border: 1px solid #c9b990;
+}
+
+/* ---- Masthead ---- */
+.masthead {
+  text-align: center;
+  border-bottom: 4px double var(--rule);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.masthead-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid var(--rule);
+  border-top: 1px solid var(--rule);
+  padding: 0.3rem 0;
+  margin-bottom: 0.8rem;
+  color: var(--ink-faded);
+}
+
+.masthead-title {
+  font-family: 'UnifrakturCook', cursive;
+  font-size: clamp(2.6rem, 8vw, 4.8rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+}
+
+.masthead-motto {
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  margin-top: 0.6rem;
+  color: var(--ink-faded);
+}
+
+/* ---- Telegraph desk (search form) ---- */
+.telegraph-desk {
+  text-align: center;
+  border: 2px solid var(--rule);
+  outline: 1px solid var(--rule);
+  outline-offset: 3px;
+  padding: 1.5rem 2rem;
+  margin: 0 auto 1.5rem;
+  background: var(--paper-dark);
+}
+
+.desk-heading {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
+}
+
+.desk-note {
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--ink-faded);
+  margin-bottom: 1rem;
+}
+
+.topic-form {
+  display: flex;
+  gap: 0.6rem;
+  max-width: 560px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#topic-input {
+  flex: 1 1 300px;
+  font-family: 'Old Standard TT', serif;
+  font-size: 1.05rem;
+  font-style: italic;
+  padding: 0.55rem 0.9rem;
+  background: var(--paper);
+  border: 1.5px solid var(--rule);
+  color: var(--ink);
+}
+
+#topic-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+#submit-btn {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  font-size: 0.9rem;
+  padding: 0.55rem 1.4rem;
+  background: var(--ink);
+  color: var(--paper);
+  border: 2px solid var(--ink);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+#submit-btn:hover:not(:disabled) {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+#submit-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* ---- Result ---- */
+.hidden {
+  display: none;
+}
+
+.double-rule {
+  border: none;
+  border-top: 4px double var(--rule);
+  margin: 1.5rem 0;
+}
+
+.headline {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.1;
+  margin-bottom: 0.6rem;
+}
+
+.subheadline {
+  font-family: 'Old Standard TT', serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 1.2rem;
+  text-align: center;
+  color: var(--ink-faded);
+  max-width: 600px;
+  margin: 0 auto 0.8rem;
+}
+
+.dateline {
+  text-align: center;
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 0.35rem 0;
+  margin-bottom: 1.4rem;
+}
+
+.article-body {
+  column-count: 2;
+  column-gap: 2rem;
+  column-rule: 1px solid var(--rule);
+  text-align: justify;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.article-body p {
+  margin-bottom: 0.9rem;
+  break-inside: avoid-column;
+}
+
+.article-body p:first-of-type::first-letter {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 3.2em;
+  float: left;
+  line-height: 0.85;
+  padding-right: 0.08em;
+}
+
+.pull-quote {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1.25rem;
+  text-align: center;
+  border-top: 3px solid var(--rule);
+  border-bottom: 3px solid var(--rule);
+  padding: 0.8rem 0.4rem;
+  margin: 0 0 1rem;
+  break-inside: avoid-column;
+  color: var(--accent);
+}
+
+/* ---- Sources ---- */
+.sources {
+  margin-top: 1.8rem;
+  border-top: 1px solid var(--rule);
+  padding-top: 0.8rem;
+}
+
+.sources h4 {
+  text-align: center;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  margin-bottom: 0.6rem;
+}
+
+.sources ul {
+  list-style: none;
+  font-size: 0.85rem;
+}
+
+.sources li {
+  padding: 0.2rem 0;
+}
+
+.sources a {
+  color: var(--ink);
+  text-decoration-color: var(--accent);
+}
+
+.sources a:hover {
+  color: var(--accent);
+}
+
+.source-name {
+  font-style: italic;
+  color: var(--ink-faded);
+}
+
+/* ---- Loading & error ---- */
+.loading {
+  text-align: center;
+  padding: 2.5rem 0;
+  font-style: italic;
+  color: var(--ink-faded);
+}
+
+.loading-spinner {
+  font-size: 2rem;
+  animation: spin 1.5s linear infinite;
+  display: inline-block;
+  margin-bottom: 0.6rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-box {
+  border: 2px solid var(--accent);
+  padding: 1.2rem;
+  text-align: center;
+  color: var(--accent);
+  margin-top: 1.5rem;
+}
+
+.error-box h3 {
+  font-family: 'Playfair Display', serif;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.4rem;
+}
+
+/* ---- Footer ---- */
+.footer {
+  margin-top: 2.5rem;
+  border-top: 4px double var(--rule);
+  padding-top: 0.7rem;
+  text-align: center;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--ink-faded);
+}
+
+@media (max-width: 640px) {
+  .paper {
+    padding: 1.5rem 1.2rem;
+  }
+  .article-body {
+    column-count: 1;
+  }
+  .masthead-top span:first-child {
+    display: none;
+  }
+}
