@@ -1,8 +1,19 @@
 import 'dotenv/config'
 import express from 'express'
+import { existsSync } from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const app = express()
 app.use(express.json())
+
+// Serve the built frontend (npm run build) so the app can run as a single server
+const distDir = path.join(__dirname, 'dist')
+if (existsSync(distDir)) {
+  app.use(express.static(distDir))
+}
 
 const PORT = process.env.PORT || 3001
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY
